@@ -108,6 +108,7 @@ export default async function handler(
     return;
   }
 
+
   const sender_data = await axios.post(
     "https://slack.com/api/users.info",
     querystring.stringify({
@@ -120,7 +121,7 @@ export default async function handler(
       },
     }
   );
-  const sender: String = sender_data.data.user.name;
+  const sender: string = sender_data.data.user.name;
 
   let tagged = req.body.event.text;
   const regex = /<@(.*?)>/g;
@@ -153,6 +154,16 @@ export default async function handler(
   let misc_points = 0;
 
   for (const name of realNames) {
+    if (name == sender) {
+      continue;
+    }
+    if (members.includes(name) && members.includes(sender)) {
+      continue;
+    }
+    if (probates.includes(name) && probates.includes(sender)) {
+      continue;
+    }
+  
     const date = new Date().toLocaleDateString();
     const time = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
     const line = `${name} was sniped on ${date} at ${time} by ${sender}\n`;
