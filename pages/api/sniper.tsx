@@ -124,6 +124,40 @@ export default async function handler(
   const sender: string = sender_data.data.user.name;
 
   let tagged = req.body.event.text;
+
+  if (tagged == "--undo") {
+    if (sender == "gal.ovadia" || sender == "mmoffitt6" || sender == "kralyea") {
+      await axios.post(
+        "https://slack.com/api/chat.postMessage",
+        querystring.stringify({
+          token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
+          channel: 'sniper', //C06S98P6BJP
+          text: "The previous snipe has been undone 🤠",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+    } else {
+      await axios.post(
+        "https://slack.com/api/chat.postMessage",
+        querystring.stringify({
+          token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
+          channel: 'sniper', //C06S98P6BJP
+          text: "Permission denied... 🙄",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+    }
+    return;
+  }
+
   const regex = /<@(.*?)>/g;
   const matches = tagged.match(regex);
   if (!matches) {
