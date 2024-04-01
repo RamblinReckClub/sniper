@@ -2,7 +2,7 @@ import React, {ReactNode} from 'react'
 
 interface Props {
     children: ReactNode;
-}P
+}
 
 const AdminLayout = ({children}: Props) => {
   return (
