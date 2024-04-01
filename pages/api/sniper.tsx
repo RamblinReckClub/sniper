@@ -125,14 +125,28 @@ export default async function handler(
 
   let tagged = req.body.event.text;
 
-  if (tagged == "--undo") {
+  if (tagged == "--undo probate") {
     if (sender == "gal.ovadia" || sender == "mmoffitt6" || sender == "kralyea") {
       await axios.post(
         "https://slack.com/api/chat.postMessage",
         querystring.stringify({
           token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
           channel: 'sniper', //C06S98P6BJP
-          text: "The previous snipe has been undone 🤠",
+          text: "The previous snipe has been undone. Sorry probates! 🤠",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+
+      await axios.post(
+        "https://slack.com/api/chat.postMessage",
+        querystring.stringify({
+          token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
+          channel: 'sniper-statistics', //C06S98P6BJP
+          text: "Undo 1 probate snipe.",
         }),
         {
           headers: {
@@ -157,6 +171,54 @@ export default async function handler(
     }
     return;
   }
+
+  if (tagged == "--undo member") {
+    if (sender == "gal.ovadia" || sender == "mmoffitt6" || sender == "kralyea") {
+      await axios.post(
+        "https://slack.com/api/chat.postMessage",
+        querystring.stringify({
+          token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
+          channel: 'sniper', //C06S98P6BJP
+          text: "The previous snipe has been undone. Sorry members! 🤠",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+
+      await axios.post(
+        "https://slack.com/api/chat.postMessage",
+        querystring.stringify({
+          token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
+          channel: 'sniper-statistics', //C06S98P6BJP
+          text: "Undo 1 member snipe.",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+    } else {
+      await axios.post(
+        "https://slack.com/api/chat.postMessage",
+        querystring.stringify({
+          token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
+          channel: 'sniper', //C06S98P6BJP
+          text: "Permission denied... 🙄",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+    }
+    return;
+  }
+
 
   const regex = /<@(.*?)>/g;
   const matches = tagged.match(regex);
