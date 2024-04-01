@@ -148,15 +148,22 @@ export default async function handler(
     realNames.push(realname.data.user.name);
   }
 
+  let probate_points = 0;
+  let member_points = 0;
+  let misc_points = 0;
+
   for (const name of realNames) {
     const date = new Date().toLocaleDateString();
     const time = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
     const line = `${name} was sniped on ${date} at ${time} by ${sender}\n`;
     if (members.includes(name)) {
+      probate_points += 1;
       fs.appendFileSync('scores/members.csv', line);
     } else if (probates.includes(name)) {
+      member_points += 1;
       fs.appendFileSync('scores/probates.csv', line);
     } else {
+      misc_points += 1;
       fs.appendFileSync('scores/misc.csv', line);
     }
 
@@ -174,4 +181,24 @@ export default async function handler(
       }
     );
   }
+
+
+  const probate_message = probate_points > 0 ? `+${probate_points} for probates!\n` : "";
+  const member_message = member_points > 0 ? `+${member_points} for members!\n` : "";
+  const misc_message = misc_points > 0 ? `+${misc_points} for an unknown team! (This message should never appear, message Gal if you're seeing this)\n` : "";
+
+  await axios.post(
+    "https://slack.com/api/chat.postMessage",
+    querystring.stringify({
+      token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
+      channel: 'sniper', //C06S98P6BJP
+      text: probate_message + member_message + misc_message,
+    }),
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    }
+  );
+
 }
