@@ -104,6 +104,19 @@ export default async function handler(
     }
   );
 
+  const channel_members = await axios.post(
+    "https://slack.com/api/conversations.members",
+    querystring.stringify({
+      token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
+      channel: req.body.event.channel,
+    }),
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    }
+  );
+
   if (channel_data.data.channel.name != "sniper") {
     return;
   }
@@ -230,6 +243,23 @@ export default async function handler(
 
   let realNames: string[] = [];
   for (const userID of uniqueUserIDs) {
+    // If user ID is not in channel_data.data, skip
+    if (!channel_members.data.members.includes(userID)) {
+      await axios.post(
+        "https://slack.com/api/chat.postMessage",
+        querystring.stringify({
+          token: process.env.SLACK_BOT_TOKEN, //gave the values directly for testing
+          channel: 'sniper', //C06S98P6BJP
+          text: "That person isn't in this channel... Embarassing 👀"
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      return;
+    }
     const realname = await axios.post(
       "https://slack.com/api/users.info",
       querystring.stringify({
@@ -253,13 +283,6 @@ export default async function handler(
     if (name == sender) {
       continue;
     }
-    if (members.includes(name) && members.includes(sender)) {
-      continue;
-    }
-    if (probates.includes(name) && probates.includes(sender)) {
-      continue;
-    }
-  
     const date = new Date().toLocaleDateString();
     const time = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
     const line = `${name} was sniped on ${date} at ${time} by ${sender}\n`;
