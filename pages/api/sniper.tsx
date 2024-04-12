@@ -285,7 +285,7 @@ export default async function handler(
     }
     const date = new Date().toLocaleDateString();
     const time = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
-    const line = `${name} was sniped on ${date} at ${time} by ${sender}\n`;
+    const line = `${name} was sniped on ${date} at ${time} by ${sender} for x2 points\n`;
     if (members.includes(name)) {
       probate_points += 1;
       fs.appendFileSync('scores/members.csv', line);
@@ -313,9 +313,9 @@ export default async function handler(
   }
 
 
-  const probate_message = probate_points > 0 ? `+${probate_points} for probates!\n` : "";
-  const member_message = member_points > 0 ? `+${member_points} for members!\n` : "";
-  const misc_message = misc_points > 0 ? `+${misc_points} for an unknown team! (This message should never appear, message Gal if you're seeing this)\n` : "";
+  const probate_message = probate_points > 0 ? `+${probate_points*2} for probates!\n` : "";
+  const member_message = member_points > 0 ? `+${member_points*2} for members!\n` : "";
+  const misc_message = misc_points > 0 ? `+${misc_points*2} for an unknown team! (This message should never appear, message Gal if you're seeing this)\n` : "";
 
   await axios.post(
     "https://slack.com/api/chat.postMessage",
