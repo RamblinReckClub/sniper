@@ -214,6 +214,11 @@ export default async function handler(
     return res.status(200).end();
   }
 
+  // ignore messages about people joining/leaving
+  if (req.body.event.text.includes("#sniper")) {
+    return res.status(200).end();
+  }
+
   const usernames: string[] = Array.from(
     new Set(
       (req.body.event.text.match(/<@(.*?)>/g) || []).map(
