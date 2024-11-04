@@ -254,9 +254,9 @@ export default async function handler(
 
     if (targetTeam) {
       if (targetTeam !== senderTeam) {
-        pointsAwarded += 1;
+        pointsAwarded += 2;
       } else {
-        pointsAwarded -= 1;
+        pointsAwarded -= 2;
       }
     }
   }
